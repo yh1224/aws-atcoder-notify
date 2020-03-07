@@ -1,5 +1,7 @@
 # AWS AtCoder Notify Streak
 
+![](screenshot.png)
+
 ## Deploy
 
 ```shell
