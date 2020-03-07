@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Notify AtCoder
+
+Globals:
+  Function:
+    Timeout: 30
+
+Parameters:
+  AtCoderUsername:
+    Type: String
+  SlackWebhookUrl:
+    Type: String
+
+Resources:
+  NotifyAtCoder:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: "NotifyAtCoderPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource:
+                  Ref: NotifyAtCoderTopic
+
+  NotifyAtCoderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          ATCODER_USERNAME: !Ref AtCoderUsername
+          NOTIFY_TOPIC_ARN: !Ref NotifyAtCoderTopic
+          SLACK_WEBHOOK_URL: !Ref SlackWebhookUrl
+      Role: !GetAtt NotifyAtCoder.Arn
+      Events:
+        Notify:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 9 * * ? *) # 18:00 JST
+
+  NotifyAtCoderTopic:
+    Type: AWS::SNS::Topic
