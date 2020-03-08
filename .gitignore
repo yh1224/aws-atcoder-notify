@@ -2,4 +2,5 @@
 .idea
 env.json*
 !env.json.example
+packaged.yaml
 samconfig.toml*

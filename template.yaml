@@ -2,6 +2,19 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Notify AtCoder
 
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: NotifyAtCoder
+    Description: Notify AtCoder
+    Author: yh1224
+    SpdxLicenseId: Apache-2.0
+    LicenseUrl: LICENSE.txt
+    ReadmeUrl: README.md
+    Labels: []
+    HomePageUrl: https://github.com/yh1224/aws-atcoder-notify
+    SemanticVersion: 0.0.1
+    SourceCodeUrl: https://github.com/yh1224/aws-atcoder-notify
+
 Globals:
   Function:
     Timeout: 30
@@ -11,6 +24,7 @@ Parameters:
     Type: String
   SlackWebhookUrl:
     Type: String
+    Default: ""
 
 Resources:
   NotifyAtCoder:
