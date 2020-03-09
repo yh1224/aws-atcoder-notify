@@ -21,13 +21,18 @@ def get_atcoder_results():
     r = requests.get(f"https://kenkoooo.com/atcoder/atcoder-api/results?user={ATCODER_USERNAME}")
     if r.status_code != 200:
         return "Failed"
-    response = r.json()
+    response = sorted(r.json(), key=lambda x: x["epoch_second"])
 
     # count daily accepted
+    accepted = set()
     acs = {}
     for problem in response:
         if problem["result"] != "AC":
             continue
+        if problem["problem_id"] in accepted:
+            # accepted already
+            continue
+        accepted.add(problem["problem_id"])
         resolve_date = datetime.fromtimestamp(problem["epoch_second"], TIMEZONE).strftime("%Y-%m-%d")
         if resolve_date not in acs:
             acs[resolve_date] = 0
